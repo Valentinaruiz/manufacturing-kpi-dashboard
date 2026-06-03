@@ -2,6 +2,16 @@
 
 A Streamlit dashboard for analyzing manufacturing performance metrics and visualizing production data.
 
+## Sample Data
+
+This repository includes a sample manufacturing dataset (`sample_data.csv`) that can be uploaded directly into the dashboard for testing.
+
+Columns:
+- Machine
+- Good Parts
+- Defects
+- Production Time
+
 ## Features
 - Upload manufacturing data using CSV files
 - Calculate manufacturing KPIs
