@@ -1,4 +1,4 @@
-﻿Machine,Good Parts,Defective Parts
-Machine A,950,50
-Machine B,1050,25
-Machine C,875,75
+﻿Machine,Planned Time,Run Time,Ideal Cycle Time,Good Parts,Defective Parts
+Machine A,480,420,0.4,950,50
+Machine B,480,450,0.38,1050,25
+Machine C,480,390,0.42,875,75

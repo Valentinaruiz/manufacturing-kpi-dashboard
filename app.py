@@ -1,68 +1,75 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-st.title("Manufacturing KPI Dashboard")
 
+st.title("Manufacturing KPI Dashboard")
 st.write("Built by Valentina Ruiz")
 
-st.header("Project Overview")
-
 st.write("""
-This dashboard helps manufacturing engineers monitor:
-
-- Throughput
-- Utilization
-- OEE (Overall Equipment Effectiveness)
-- Defect Rate
-- Production Performance
+This dashboard analyzes manufacturing performance using production data,
+quality data, and equipment efficiency metrics.
 """)
 
-st.header("Machine Status")
-
-st.metric("Throughput", "950 units/day")
-st.metric("Defect Rate", "2.5%")
-st.metric("OEE", "87%")
-
-
-st.header("Upload Manufacturing Data")
-
-uploaded_file = st.file_uploader(
-    "Choose a CSV file",
-    type=["csv"]
-)
+uploaded_file = st.file_uploader("Upload Manufacturing CSV File", type=["csv"])
 
 if uploaded_file is not None:
-
     df = pd.read_csv(uploaded_file)
+
+    df["Total Parts"] = df["Good Parts"] + df["Defective Parts"]
+    df["Availability"] = df["Run Time"] / df["Planned Time"]
+    df["Performance"] = (df["Ideal Cycle Time"] * df["Total Parts"]) / df["Run Time"]
+    df["Quality"] = df["Good Parts"] / df["Total Parts"]
+    df["OEE"] = df["Availability"] * df["Performance"] * df["Quality"]
+    df["Defect Rate"] = df["Defective Parts"] / df["Total Parts"]
 
     st.success("File uploaded successfully!")
 
-    st.subheader("Data Preview")
-
+    st.header("Data Preview")
     st.dataframe(df)
 
+    total_parts = df["Total Parts"].sum()
     total_good = df["Good Parts"].sum()
     total_defects = df["Defective Parts"].sum()
+    defect_rate = total_defects / total_parts * 100
+    average_oee = df["OEE"].mean() * 100
 
-    total_parts = total_good + total_defects
+    st.header("Overall Manufacturing KPIs")
 
-    defect_rate = (total_defects / total_parts) * 100
+    col1, col2, col3, col4 = st.columns(4)
 
-    st.header("Manufacturing KPIs")
+    col1.metric("Total Production", int(total_parts))
+    col2.metric("Good Parts", int(total_good))
+    col3.metric("Defect Rate", f"{defect_rate:.2f}%")
+    col4.metric("Average OEE", f"{average_oee:.2f}%")
 
-    st.metric("Total Production", total_parts)
+    st.header("Machine-Level Insights")
 
-    st.metric("Good Parts", total_good)
+    best_machine = df.loc[df["OEE"].idxmax(), "Machine"]
+    worst_machine = df.loc[df["OEE"].idxmin(), "Machine"]
+    highest_defect_machine = df.loc[df["Defect Rate"].idxmax(), "Machine"]
 
-    st.metric("Defect Rate (%)", round(defect_rate, 2))
+    st.write(f"Best performing machine based on OEE: **{best_machine}**")
+    st.write(f"Lowest performing machine based on OEE: **{worst_machine}**")
+    st.write(f"Machine with highest defect rate: **{highest_defect_machine}**")
 
-    st.header("Production by Machine")
+    st.header("OEE by Machine")
 
-    fig = px.bar(
-    df,
-    x="Machine",
-    y="Good Parts",
-    title="Good Parts Produced by Machine"
-)
+    oee_chart = px.bar(
+        df,
+        x="Machine",
+        y="OEE",
+        title="OEE by Machine"
+    )
 
-    st.plotly_chart(fig)   
+    st.plotly_chart(oee_chart)
+
+    st.header("Good Parts by Machine")
+
+    production_chart = px.bar(
+        df,
+        x="Machine",
+        y="Good Parts",
+        title="Good Parts Produced by Machine"
+    )
+
+    st.plotly_chart(production_chart)
