@@ -1,3 +1,5 @@
+View App: https://manufacturing-kpi-dashboard-yxb4tfjreptax7bj8mpe7c.streamlit.app/
+
 # Manufacturing KPI Dashboard
 
 A Streamlit dashboard for analyzing manufacturing performance metrics and visualizing production data.
