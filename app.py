@@ -34,13 +34,21 @@ if uploaded_file is not None:
     average_oee = df["OEE"].mean() * 100
 
     st.header("Overall Manufacturing KPIs")
+avg_availability = df["Availability"].mean() * 100
+avg_performance = df["Performance"].mean() * 100
+avg_quality = df["Quality"].mean() * 100
 
-    col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Production", int(total_parts))
+col2.metric("Good Parts", int(total_good))
+col3.metric("Defective Parts", int(total_defects))
+col4.metric("Defect Rate", f"{defect_rate:.2f}%")
 
-    col1.metric("Total Production", int(total_parts))
-    col2.metric("Good Parts", int(total_good))
-    col3.metric("Defect Rate", f"{defect_rate:.2f}%")
-    col4.metric("Average OEE", f"{average_oee:.2f}%")
+col5, col6, col7, col8 = st.columns(4)
+col5.metric("Avg Availability", f"{avg_availability:.2f}%")
+col6.metric("Avg Performance", f"{avg_performance:.2f}%")
+col7.metric("Avg Quality", f"{avg_quality:.2f}%")
+col8.metric("Average OEE", f"{average_oee:.2f}%")
 
     st.header("Machine-Level Insights")
 
@@ -73,3 +81,4 @@ if uploaded_file is not None:
     )
 
     st.plotly_chart(production_chart)
+    
